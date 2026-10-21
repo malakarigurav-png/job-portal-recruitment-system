@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Applications - JobPortal</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+        }
+
+        nav {
+            background: #2563eb;
+            color: white;
+            padding: 18px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h2 {
+            font-size: 24px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .container {
+            width: 85%;
+            margin: 40px auto;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #222;
+        }
+
+        .application-card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .application-card h3 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .application-card p {
+            margin: 8px 0;
+            color: #555;
+        }
+
+        .status {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-weight: bold;
+        }
+
+        .no-applications {
+            background: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            color: #666;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <nav>
+
+        <h2>JobPortal</h2>
+
+        <div>
+            <a href="index.html">Home</a>
+            <a href="applications.html">My Applications</a>
+        </div>
+
+    </nav>
+
+
+    <div class="container">
+
+        <h1>My Applications</h1>
+
+        <div id="applicationsContainer">
+
+            <p>Loading applications...</p>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        const loggedInUser =
+            JSON.parse(localStorage.getItem("loggedInUser"));
+
+
+        // Check whether the user is logged in
+
+        if (!loggedInUser) {
+
+            alert("Please login first.");
+
+            window.location.href = "login.html";
+
+        }
+
+
+        fetch(
+            `http://localhost:8080/api/applications/user/${loggedInUser.id}`
+        )
+
+        .then(response => response.json())
+
+        .then(applications => {
+
+            const container =
+                document.getElementById("applicationsContainer");
+
+
+            container.innerHTML = "";
+
+
+            if (applications.length === 0) {
+
+                container.innerHTML = `
+                    <div class="no-applications">
+                        <h3>No applications yet</h3>
+                        <p>You have not applied for any jobs.</p>
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            applications.forEach(application => {
+
+                const card =
+                    document.createElement("div");
+
+                card.className = "application-card";
+
+
+                fetch(`http://localhost:8080/api/jobs/${application.jobId}`)
+    .then(response => response.json())
+    .then(job => {
+
+        card.innerHTML = `
+
+            <h3>${job.title}</h3>
+
+            <p>
+                <strong>Company:</strong>
+                ${job.company}
+            </p>
+
+            <p>
+                <strong>Location:</strong>
+                📍 ${job.location}
+            </p>
+
+            <p>
+                <strong>Salary:</strong>
+                💰 ${job.salary}
+            </p>
+
+            <p>
+                <strong>Description:</strong>
+                ${job.description}
+            </p>
+
+            <p>
+                <strong>Application ID:</strong>
+                ${application.id}
+            </p>
+
+            <span class="status">
+                ${application.status}
+            </span>
+
+        `;
+
+    }); 
+
+
+                container.appendChild(card);
+
+            });
+
+        })
+
+        .catch(error => {
+
+            console.error(
+                "Error loading applications:",
+                error
+            );
+
+        });
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>JobPortal - Find Your Dream Job</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: #222;
+        }
+
+        /* Navigation */
+
+        nav {
+            height: 70px;
+            background-color: #ffffff;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 7%;
+
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .login-btn {
+            padding: 10px 20px;
+            border: 1px solid #2563eb;
+            border-radius: 6px;
+            color: #2563eb !important;
+        }
+
+        .register-btn {
+            padding: 10px 20px;
+            background-color: #2563eb;
+            color: white !important;
+            border-radius: 6px;
+        }
+
+        /* Announcement */
+
+        .announcement {
+            background-color: #2563eb;
+            color: white;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        /* Hero */
+
+        .hero {
+            min-height: 430px;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+
+            padding: 40px 20px;
+
+            background: linear-gradient(
+                135deg,
+                #e8f0ff,
+                #ffffff
+            );
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            margin-bottom: 15px;
+            color: #172554;
+        }
+
+        .hero h1 span {
+            color: #2563eb;
+        }
+
+        .hero p {
+            font-size: 19px;
+            color: #555;
+            margin-bottom: 35px;
+        }
+
+        /* Search */
+
+        .search-box {
+            background-color: white;
+
+            width: min(850px, 90%);
+
+            padding: 15px;
+
+            display: flex;
+            gap: 10px;
+
+            border-radius: 10px;
+
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .search-box input {
+            flex: 1;
+
+            padding: 15px;
+
+            border: 1px solid #ddd;
+            border-radius: 6px;
+
+            font-size: 15px;
+
+            outline: none;
+        }
+
+        .search-btn {
+            padding: 15px 25px;
+
+            border: none;
+            border-radius: 6px;
+
+            background-color: #2563eb;
+            color: white;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .search-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Jobs */
+
+        .jobs-section {
+            padding: 60px 7%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .section-title h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            color: #666;
+        }
+
+        .jobs-container {
+            display: grid;
+
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(280px, 1fr)
+            );
+
+            gap: 25px;
+        }
+
+        /* Job Card */
+
+        .job-card {
+            background-color: white;
+
+            padding: 25px;
+
+            border-radius: 10px;
+
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+
+            transition: 0.3s;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .job-card h3 {
+            color: #172554;
+            margin-bottom: 10px;
+        }
+
+        .company {
+            color: #2563eb;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .job-info {
+            color: #666;
+            margin: 8px 0;
+        }
+
+        .apply-btn {
+            margin-top: 18px;
+
+            width: 100%;
+
+            padding: 12px;
+
+            border: none;
+
+            border-radius: 6px;
+
+            background-color: #2563eb;
+
+            color: white;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .apply-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Footer */
+
+        footer {
+            background-color: #172554;
+
+            color: white;
+
+            text-align: center;
+
+            padding: 25px;
+
+            margin-top: 30px;
+        }
+
+        /* Mobile */
+
+        @media (max-width: 700px) {
+
+            .nav-links {
+                gap: 10px;
+            }
+
+            .nav-links a:not(.login-btn):not(.register-btn) {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 38px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+
+    <nav>
+
+        <div class="logo">
+            JobPortal
+        </div>
+
+        <div class="nav-links">
+
+            <a href="#">Home</a>
+            <a href="#jobs">Jobs</a>
+            <a href="#">About</a>
+
+            <a href="#" class="login-btn">
+                Login
+            </a>
+
+            <a href="#" class="register-btn">
+                Register
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Announcement -->
+
+    <div class="announcement">
+
+        <marquee behavior="scroll" direction="left">
+
+            🔔 New job opportunities are added regularly!
+            &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
+            🚀 Start your career journey today!
+            &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
+            💼 Find jobs from top companies!
+
+        </marquee>
+
+    </div>
+
+
+    <!-- Hero Section -->
+
+    <section class="hero">
+
+        <h1>
+            Find Your <span>Dream Job</span>
+        </h1>
+
+        <p>
+            Discover exciting career opportunities and build your future.
+        </p>
+
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                placeholder="Job title, skills or keywords"
+            >
+
+            <input
+                type="text"
+                placeholder="Location"
+            >
+
+            <button class="search-btn">
+                Search Jobs
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- Jobs Section -->
+
+    <section class="jobs-section" id="jobs">
+
+        <div class="section-title">
+
+            <h2>
+                Latest Jobs
+            </h2>
+
+            <p>
+                Explore the latest opportunities
+            </p>
+
+        </div>
+
+
+        <div class="jobs-container" id="jobs">
+
+            <!-- Jobs from Spring Boot will appear here -->
+
+        </div>
+
+    </section>
+
+
+    <!-- Footer -->
+
+    <footer>
+
+        <p>
+            © 2026 JobPortal | Built with Java Spring Boot
+        </p>
+
+    </footer>
+
+<script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Recruiter Dashboard - JobPortal</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+        }
+
+        nav {
+            background: #2563eb;
+            color: white;
+            padding: 18px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h2 {
+            font-size: 24px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .container {
+            width: 85%;
+            margin: 40px auto;
+        }
+
+        .welcome {
+            margin-bottom: 30px;
+        }
+
+        .welcome h1 {
+            color: #222;
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: #666;
+        }
+
+        .form-container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .jobs-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .job-card {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .job-card h3 {
+            color: #2563eb;
+            margin-bottom: 12px;
+        }
+
+        .job-card p {
+            margin: 8px 0;
+            color: #555;
+        }
+
+        .no-jobs {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            color: #666;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <nav>
+
+        <h2>JobPortal</h2>
+
+        <div>
+
+            <a href="index.html">Home</a>
+
+            <a href="applications.html">Applications</a>
+
+        </div>
+
+    </nav>
+
+
+    <div class="container">
+
+        <div class="welcome">
+
+            <h1>Recruiter Dashboard</h1>
+
+            <p id="welcomeMessage">
+                Welcome Recruiter
+            </p>
+
+        </div>
+
+
+        <!-- Post Job -->
+
+        <div class="form-container">
+
+            <h2>Post a New Job</h2>
+
+            <form id="jobForm">
+
+                <label>Job Title</label>
+
+                <input
+                    type="text"
+                    id="title"
+                    placeholder="Example: Java Developer"
+                    required
+                >
+
+
+                <label>Company</label>
+
+                <input
+                    type="text"
+                    id="company"
+                    placeholder="Company name"
+                    required
+                >
+
+
+                <label>Location</label>
+
+                <input
+                    type="text"
+                    id="location"
+                    placeholder="Example: Bangalore"
+                    required
+                >
+
+
+                <label>Salary</label>
+
+                <input
+                    type="text"
+                    id="salary"
+                    placeholder="Example: 6 LPA"
+                    required
+                >
+
+
+                <label>Description</label>
+
+                <textarea
+                    id="description"
+                    placeholder="Enter job description"
+                    required
+                ></textarea>
+
+
+                <button type="submit">
+                    Post Job
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- My Jobs -->
+
+        <h2 style="margin-bottom: 20px;">
+            My Jobs
+        </h2>
+
+
+        <div
+            class="jobs-container"
+            id="jobsContainer"
+        >
+
+            <p>Loading jobs...</p>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        const loggedInUser =
+            JSON.parse(localStorage.getItem("loggedInUser"));
+
+
+        // Check login
+
+        if (!loggedInUser) {
+
+            alert("Please login first.");
+
+            window.location.href = "login.html";
+
+        }
+
+
+        // Check recruiter role
+
+        if (loggedInUser.role !== "RECRUITER") {
+
+            alert("Only recruiters can access this page.");
+
+            window.location.href = "index.html";
+
+        }
+
+
+        document.getElementById("welcomeMessage").textContent =
+            "Welcome, " + loggedInUser.name;
+
+
+        // Load recruiter's jobs
+
+        function loadJobs() {
+
+            fetch(
+                `http://localhost:8080/api/jobs/recruiter/${loggedInUser.id}`
+            )
+
+            .then(response => response.json())
+
+            .then(jobs => {
+
+                const container =
+                    document.getElementById("jobsContainer");
+
+                container.innerHTML = "";
+
+
+                if (jobs.length === 0) {
+
+                    container.innerHTML = `
+                        <div class="no-jobs">
+                            You haven't posted any jobs yet.
+                        </div>
+                    `;
+
+                    return;
+
+                }
+
+
+                jobs.forEach(job => {
+
+    const card = document.createElement("div");
+
+    card.className = "job-card";
+
+    card.innerHTML = `
+
+        <h3>${job.title}</h3>
+
+        <p>
+            <strong>Company:</strong>
+            ${job.company}
+        </p>
+
+        <p>
+            <strong>Location:</strong>
+            ${job.location}
+        </p>
+
+        <p>
+            <strong>Salary:</strong>
+            ${job.salary}
+        </p>
+
+        <p>
+            ${job.description}
+        </p>
+
+        <hr>
+
+        <h4>Applicants</h4>
+
+        <div id="applicants-${job.id}">
+            Loading applicants...
+        </div>
+
+    `;
+
+    container.appendChild(card);
+
+
+    // Load applications for this job
+
+    fetch(
+        `http://localhost:8080/api/applications/job/${job.id}`
+    )
+    .then(response => response.json())
+    .then(applications => {
+
+        const applicantsContainer =
+            document.getElementById(`applicants-${job.id}`);
+
+        if (applications.length === 0) {
+
+            applicantsContainer.innerHTML =
+                "No applicants yet.";
+
+            return;
+        }
+
+
+        applications.forEach(application => {
+
+            fetch(
+                `http://localhost:8080/api/users/${application.userId}`
+            )
+            .then(response => response.json())
+            .then(user => {
+
+                const applicant = document.createElement("div");
+
+               applicant.innerHTML = `
+
+    <p>
+        <strong>Name:</strong>
+        ${user.name}
+    </p>
+
+    <p>
+        <strong>Email:</strong>
+        ${user.email}
+    </p>
+
+    <p>
+        <strong>Status:</strong>
+        <span id="status-${application.id}">
+            ${application.status}
+        </span>
+    </p>
+
+    <select
+        onchange="updateApplicationStatus(${application.id}, this.value)"
+    >
+        <option value="">Change Status</option>
+        <option value="APPLIED">APPLIED</option>
+        <option value="SHORTLISTED">SHORTLISTED</option>
+        <option value="REJECTED">REJECTED</option>
+    </select>
+
+    <hr>
+
+`; 
+
+                applicantsContainer.appendChild(applicant);
+
+            });
+
+        });
+
+    })
+    .catch(error => {
+
+        console.error(
+            "Error loading applicants:",
+            error
+        );
+
+    });
+
+}); 
+
+            })
+
+            .catch(error => {
+
+                console.error(
+                    "Error loading jobs:",
+                    error
+                );
+
+            });
+
+        }
+        function updateApplicationStatus(applicationId, status) {
+
+    if (status === "") {
+        return;
+    }
+
+    fetch(
+        `http://localhost:8080/api/applications/${applicationId}/status?status=${status}`,
+        {
+            method: "PUT"
+        }
+    )
+    .then(response => {
+
+        if (!response.ok) {
+            throw new Error("Failed to update status");
+        }
+
+        return response.json();
+
+    })
+    .then(data => {
+
+        document.getElementById(
+            `status-${applicationId}`
+        ).textContent = data.status;
+
+        alert("Application status updated!");
+
+    })
+    .catch(error => {
+
+        console.error(
+            "Error updating status:",
+            error
+        );
+
+        alert("Failed to update application status.");
+
+    });
+}
+
+
+        // Post new job
+
+        document
+            .getElementById("jobForm")
+            .addEventListener("submit", function(event) {
+
+                event.preventDefault();
+
+
+                const job = {
+
+                    title:
+                        document.getElementById("title").value,
+
+                    company:
+                        document.getElementById("company").value,
+
+                    location:
+                        document.getElementById("location").value,
+
+                    salary:
+                        document.getElementById("salary").value,
+
+                    description:
+                        document.getElementById("description").value,
+
+                    recruiterId:
+                        loggedInUser.id 
+
+                };
+
+
+                fetch("http://localhost:8080/api/jobs", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify(job)
+
+                })
+
+                .then(response => {
+
+                    if (!response.ok) {
+                        throw new Error("Failed to post job");
+                    }
+
+                    return response.json();
+
+                })
+
+                .then(data => {
+
+                    console.log(
+                        "Job posted:",
+                        data
+                    );
+
+                    alert("Job posted successfully!");
+
+                    document
+                        .getElementById("jobForm")
+                        .reset();
+
+                    loadJobs();
+
+                })
+
+                .catch(error => {
+
+                    console.error(
+                        "Error posting job:",
+                        error
+                    );
+
+                    alert("Failed to post job.");
+
+                });
+
+            });
+
+
+        // Load jobs when page opens
+
+        loadJobs();
+
+    </script>
+
+</body>
+
+</html> 
